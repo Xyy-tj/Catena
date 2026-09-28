@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Catena.App" x:Class="Catena.App.MainWindow" Title="Catena" Icon="avares://Catena.App/Assets/catena.ico" Width="1440" Height="920" WindowDecorations="BorderOnly" ExtendClientAreaToDecorationsHint="True" ExtendClientAreaTitleBarHeightHint="52" MinWidth="1000" MinHeight="640" Background="{DynamicResource CatenaWindow}">
+  <Panel>
+  <Image x:Name="SkinBackground" Stretch="UniformToFill" IsHitTestVisible="False" />
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="8,0,8,8" RowSpacing="0">
+    <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="18" Height="52" Margin="12,0,0,8" Background="Transparent" PointerPressed="TitlePointerPressed" DoubleTapped="TitleDoubleTapped">
+      <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center"><Image Source="avares://Catena.App/Assets/catena-64.png" x:Name="BrandIcon" Width="23" Height="23" /><TextBlock Text="Catena" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" /></StackPanel>
+      <ComboBox Grid.Column="1" x:Name="WorkspaceSelector" ItemsSource="{Binding Workspaces}" SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay}" Width="164" SelectionChanged="SelectWorkspace" ToolTip.Tip="切换工作区 · 右键管理" VerticalAlignment="Center" IsEnabled="{Binding CanManage}">
+        <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" /></DataTemplate></ComboBox.ItemTemplate>
+        <ComboBox.ContextMenu><ContextMenu><MenuItem Header="管理工作区" Click="ToggleWorkspaceTools" /><MenuItem Header="常用位置与近期记录" Click="OpenLocations" /><MenuItem Header="单窗格" Command="{Binding SetLayoutCommand}" CommandParameter="1" /></ContextMenu></ComboBox.ContextMenu>
+      </ComboBox>
+      <Border x:Name="GlobalSearchEntry" Grid.Column="2" MaxWidth="744" VerticalAlignment="Center" Height="36" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" IsEnabled="{Binding !IsBusy}">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <TextBox Grid.Column="1" x:Name="GlobalSearchBox" BorderThickness="0" Background="Transparent" PlaceholderText="搜索工作区文件…" KeyDown="GlobalSearchKeyDown" ToolTip.Tip="当前工作区及子文件夹 · Ctrl+K" />
+          <Button Grid.Column="2" x:Name="SearchOptionsButton" Classes="icon" ToolTip.Tip="搜索范围与方式"><local:UiIcon Kind="filter" />
+            <Button.Flyout><Flyout><StackPanel Spacing="10" Width="200">
+              <TextBlock Text="搜索范围" FontWeight="SemiBold" />
+              <ComboBox x:Name="GlobalSearchScope" SelectedIndex="2" SelectionChanged="SearchOptionsChanged" HorizontalAlignment="Stretch"><ComboBoxItem Content="此电脑" /><ComboBoxItem Content="当前窗格及子文件夹" /><ComboBoxItem Content="工作区及子文件夹" /></ComboBox>
+              <TextBlock Text="搜索方式" FontWeight="SemiBold" />
+              <ComboBox x:Name="GlobalSearchMethod" SelectedIndex="0" SelectionChanged="SearchOptionsChanged" HorizontalAlignment="Stretch"><ComboBoxItem Content="文件名" /><ComboBoxItem Content="AI 描述" /></ComboBox>
+            </StackPanel></Flyout></Button.Flyout>
+          </Button>
+          <Button Classes="icon" Click="SubmitGlobalSearch" ToolTip.Tip="查找 · Enter"><local:UiIcon Kind="search" /></Button>
+        </Grid>
+      </Border>
+      <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+        <Border BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource CatenaSurface}" ClipToBounds="True">
+          <StackPanel Orientation="Horizontal" Spacing="0" IsEnabled="{Binding !IsBusy}">
+            <Button x:Name="FourPaneButton" Classes="segment" Classes.chosen="{Binding IsFourPanes}" Command="{Binding SetLayoutCommand}" CommandParameter="4" ToolTip.Tip="四窗格"><local:UiIcon Kind="grid" /></Button>
+            <Button x:Name="RowsPaneButton" Classes="segment" Classes.chosen="{Binding IsRowsLayout}" Command="{Binding SetLayoutCommand}" CommandParameter="rows" ToolTip.Tip="上下双窗格"><local:UiIcon Kind="rows" /></Button>
+            <Button x:Name="ColumnsPaneButton" Classes="segment" Classes.chosen="{Binding IsColumnsLayout}" Command="{Binding SetLayoutCommand}" CommandParameter="columns" ToolTip.Tip="左右双窗格"><local:UiIcon Kind="columns" /></Button>
+          </StackPanel>
+        </Border>
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"><TextBlock Text="预览" VerticalAlignment="Center" /><ToggleSwitch Classes="previewSwitch" IsChecked="{Binding PreviewVisible, Mode=TwoWay}" OnContent="" OffContent="" ToolTip.Tip="预览 · Alt+P" /></StackPanel>
+        <Button Classes="icon" Click="OpenSettings" ToolTip.Tip="设置"><local:UiIcon Kind="settings" Width="20" Height="20" /></Button>
+        <StackPanel Orientation="Horizontal" Spacing="0">
+          <Button Classes="caption" Click="MinimizeWindow" ToolTip.Tip="最小化"><local:UiIcon Kind="minimize" Width="14" Height="14" /></Button>
+          <Button Classes="caption" Click="MaximizeWindow" ToolTip.Tip="最大化 / 还原"><local:UiIcon x:Name="MaximizeIcon" Kind="maximize" Width="14" Height="14" /></Button>
+          <Button Classes="caption close" Click="CloseWindow" ToolTip.Tip="关闭"><local:UiIcon Kind="close" Width="16" Height="16" /></Button>
+        </StackPanel>
+      </StackPanel>
+    </Grid>    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="6" IsEnabled="{Binding CanManage}" IsVisible="{Binding WorkspaceToolsVisible}">
+      <TextBox Text="{Binding WorkspaceName, Mode=TwoWay}" PlaceholderText="工作区名称" />
+      <Button Grid.Column="1" Content="另存" Command="{Binding SaveAsCommand}" />
+      <Button Grid.Column="2" Content="重命名" Command="{Binding RenameCommand}" />
+      <Button Grid.Column="3" Content="删除" Click="DeleteWorkspace" />
+    </Grid>
+    <Grid Grid.Row="2" x:Name="ContentGrid" ColumnDefinitions="*,8,292" SizeChanged="ContentSizeChanged">
+      <Grid x:Name="PaneHost" />
+      <GridSplitter x:Name="PreviewSplitter" Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowsPreview="False" DragIncrement="1" Cursor="SizeWestEast" IsVisible="{Binding PreviewVisible}" DragCompleted="PreviewDragCompleted" DoubleTapped="ResetPreviewWidth" ToolTip.Tip="拖动调整预览宽度 · 双击复位" />
+      <Border Grid.Column="2" IsVisible="{Binding PreviewVisible}" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="5">
+        <Grid RowDefinitions="Auto,*">
+          <Grid Margin="16,7" ColumnDefinitions="*,Auto"><TextBlock Text="预览" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" /><Button Grid.Column="1" Classes="icon" Click="ClosePreview" ToolTip.Tip="关闭预览"><local:UiIcon Kind="close" /></Button></Grid>
+          <local:PreviewView Grid.Row="1" DataContext="{Binding Preview}" IsVisible="{Binding $parent[Window].DataContext.PreviewVisible}" />
+        </Grid>
+      </Border>
+    </Grid>
+    <TextBlock Grid.Row="3" Text="{Binding Message}" IsVisible="{Binding HasMessage}" Foreground="{DynamicResource CatenaSecondary}" FontSize="12" TextWrapping="Wrap" />
+  </Grid>
+  </Panel>
+</Window>
+
+
+

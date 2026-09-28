@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+.tools/
+vendor/everything/es.exe
+vendor/everything/Everything-Setup.exe
+.data/
+artifacts/
+TestResults/
+.vs/
+*.user
+*.db
+*.db-shm
+*.db-wal

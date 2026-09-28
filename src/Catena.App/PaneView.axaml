@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Catena.App" x:Class="Catena.App.PaneView">
+  <UserControl.Styles>
+    <Style Selector="Border.pane"><Setter Property="BorderBrush" Value="{DynamicResource CatenaBorder}" /></Style>
+    <Style Selector="Border.pane.active"><Setter Property="BorderBrush" Value="{DynamicResource CatenaAccent}" /></Style>
+    <Style Selector="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="6,0" /><Setter Property="MinHeight" Value="30" /></Style>
+        <Style Selector="ListBoxItem"><Setter Property="Theme" Value="{StaticResource CatenaFileRow}" /></Style>
+    <Style Selector="Button.navigation"><Setter Property="Width" Value="30" /><Setter Property="Padding" Value="3" /></Style>
+    <Style Selector="TreeViewItem"><Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" /></Style>
+  </UserControl.Styles>
+  <Border Classes="pane" Classes.active="{Binding IsActive}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource CatenaSurface}" Padding="8,6">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="6">
+      <Grid x:Name="PaneTitle" ColumnDefinitions="*,Auto" Height="36" SizeChanged="TitleSizeChanged">
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="4,0,0,0" VerticalAlignment="Center">
+          <local:FileIconView Entry="{Binding FolderEntry}" Width="24" Height="24" />
+          <TextBlock x:Name="FolderTitle" Text="{Binding FolderName}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Address}" />
+          <Button Classes="icon small" Classes.chosen="{Binding HasPinnedRoot}" Command="{Binding TogglePinCommand}" ToolTip.Tip="固定或取消固定文件夹"><local:UiIcon Kind="pin" Width="16" Height="16" /></Button>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+          <Button x:Name="PaneSearchButton" Classes="icon" Click="OpenSearch" ToolTip.Tip="搜索此窗格 · Ctrl+K"><local:UiIcon Kind="search" /></Button>
+          <Button x:Name="FooterActions" Classes="icon" ToolTip.Tip="更多操作"><local:UiIcon Kind="more" />
+            <Button.Flyout><Flyout><StackPanel Spacing="4">
+              <Button Content="AI 对话" Click="OpenChat" HorizontalAlignment="Stretch" />
+              <Button Content="浏览文件夹" Click="ChooseFolder" HorizontalAlignment="Stretch" />
+              <Button Content="刷新" Command="{Binding RefreshCommand}" HorizontalAlignment="Stretch" />
+              <Button Content="返回固定目录" Command="{Binding HomeCommand}" IsEnabled="{Binding HasPinnedRoot}" HorizontalAlignment="Stretch" />
+              <Button Content="加入常用位置" Command="{Binding AddFavoriteCommand}" HorizontalAlignment="Stretch" />
+              <Button Content="复制路径" Click="CopyPath" HorizontalAlignment="Stretch" />
+              <Button Content="打开终端" Command="{Binding TerminalCommand}" HorizontalAlignment="Stretch" />
+              <Button Content="在资源管理器中显示" Command="{Binding RevealCommand}" HorizontalAlignment="Stretch" />
+            </StackPanel></Flyout></Button.Flyout>
+          </Button>
+        </StackPanel>
+      </Grid>
+      <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Height="38" Margin="0,0,0,5">
+        <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+          <Button Classes="navigation icon" Command="{Binding BackCommand}" IsEnabled="{Binding CanBack}" ToolTip.Tip="后退 · Alt+Left"><local:UiIcon Kind="back" /></Button>
+          <Button Classes="navigation icon" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanForward}" ToolTip.Tip="前进 · Alt+Right"><local:UiIcon Kind="forward" /></Button>
+          <Button Classes="navigation icon" Command="{Binding UpCommand}" ToolTip.Tip="上级文件夹 · Alt+Up"><local:UiIcon Kind="up" /></Button>
+        </StackPanel>
+        <Panel Grid.Column="1" SizeChanged="AddressSizeChanged" VerticalAlignment="Center" Height="34">
+          <Border x:Name="BreadcrumbBorder" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" Padding="3,0" ToolTip.Tip="{Binding Address}" DoubleTapped="EditAddress"><Grid x:Name="BreadcrumbGrid" /></Border>
+          <TextBox x:Name="AddressBox" IsVisible="False" Text="{Binding Address, Mode=TwoWay}" PlaceholderText="文件夹路径" KeyDown="AddressKeyDown" LostFocus="FinishEditingAddress" ToolTip.Tip="{Binding Address}" />
+        </Panel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+          <ToggleButton Classes="icon" IsChecked="{Binding FilterVisible, Mode=TwoWay}" ToolTip.Tip="{Binding FilterButtonText}"><local:UiIcon Kind="filter" /></ToggleButton>
+          <ToggleButton Classes="icon" IsChecked="{Binding TreeVisible, Mode=TwoWay}" ToolTip.Tip="目录树"><local:UiIcon Kind="tree" /></ToggleButton>
+          <Button Classes="icon small" Click="ChooseFolder" ToolTip.Tip="浏览文件夹"><local:UiIcon Kind="more" Width="15" Height="15" /></Button>
+        </StackPanel>
+      </Grid>      <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="6" IsVisible="{Binding FilterVisible}">
+        <TextBox Text="{Binding Filter, Mode=TwoWay}" PlaceholderText="筛选" ToolTip.Tip="只筛选当前列表，不含子文件夹" />
+        <ComboBox Grid.Column="1" SelectedIndex="{Binding SortIndex, Mode=TwoWay}" Width="108"><ComboBoxItem Content="名称" /><ComboBoxItem Content="最近修改" /><ComboBoxItem Content="大小" /></ComboBox>
+      </Grid>
+      <Grid Grid.Row="3" x:Name="BrowserGrid" ColumnDefinitions="0,0,*" SizeChanged="BrowserSizeChanged">
+        <Border IsVisible="{Binding TreeVisible}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="0,0,1,0">
+          <Grid RowDefinitions="Auto,*" RowSpacing="4" Margin="0,0,4,0">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Button Content="＋" Command="{Binding AddFavoriteCommand}" ToolTip.Tip="当前文件夹加入常用并建立缓存" />
+              <Button Content="↻" Command="{Binding Browser.RefreshCommand}" ToolTip.Tip="刷新所选目录" />
+            </StackPanel>
+            <TreeView x:Name="FolderTree" Grid.Row="1" ItemsSource="{Binding Browser.Nodes}" SelectedItem="{Binding Browser.SelectedNode, Mode=TwoWay}">
+              <TreeView.ItemTemplate><TreeDataTemplate ItemsSource="{Binding Children}" DataType="local:FolderNodeViewModel">
+                <StackPanel Orientation="Horizontal" Spacing="5" ToolTip.Tip="{Binding Detail}">
+                  <local:FileIconView Entry="{Binding Icon}" Width="16" Height="16" IsVisible="{Binding IsLocation}" />
+                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                </StackPanel>
+              </TreeDataTemplate></TreeView.ItemTemplate>
+            </TreeView>
+          </Grid>
+        </Border>
+        <GridSplitter Grid.Column="1" IsVisible="{Binding TreeVisible}" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="SizeWestEast" DragIncrement="1" DragCompleted="TreeDragCompleted" />
+        <LayoutTransformControl Grid.Column="2">
+          <LayoutTransformControl.LayoutTransform><ScaleTransform ScaleX="{Binding ListZoom}" ScaleY="{Binding ListZoom}" /></LayoutTransformControl.LayoutTransform>
+        <Grid RowDefinitions="Auto,*" RowSpacing="6">
+      <Grid ColumnDefinitions="30,*,96,130" Height="28" Margin="8,0" SizeChanged="DetailRowSizeChanged">
+        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center"><TextBlock Text="名称" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Text="▴" FontSize="10" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" /></StackPanel>
+        <Border Grid.Column="2" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1,0,0,0" Margin="-10,5,0,5"><TextBlock Text="大小" Margin="10,0,0,0" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" /></Border>
+        <Border Grid.Column="3" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1,0,0,0" Margin="-10,5,0,5" ClipToBounds="True"><TextBlock Text="修改时间" Margin="10,0,0,0" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" /></Border>
+      </Grid>
+      <ListBox Grid.Row="1" x:Name="FileList" ItemsSource="{Binding Entries}" SelectionMode="Multiple" DoubleTapped="OpenEntry" KeyDown="ListKeyDown" SelectionChanged="SelectionChanged" Background="Transparent" BorderThickness="0">
+        <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+        <ListBox.ItemTemplate><DataTemplate>
+          <Border BorderBrush="{DynamicResource CatenaRowBorder}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="30,*,96,130" Height="38" ToolTip.Tip="{Binding DisplayPath}" SizeChanged="DetailRowSizeChanged">
+              <local:FileIconView Entry="{Binding}" Width="24" Height="24" HorizontalAlignment="Left" />
+              <TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" />
+              <TextBlock Grid.Column="2" Text="{Binding SizeText}" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" FontSize="12" />
+              <TextBlock Grid.Column="3" Text="{Binding ModifiedText}" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" FontSize="12" ClipToBounds="True" />
+            </Grid>
+          </Border>
+        </DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+        </Grid>
+        </LayoutTransformControl>
+      </Grid>
+      <TextBlock Grid.Row="4" Text="{Binding Status}" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" TextTrimming="CharacterEllipsis" Margin="8,8,0,5" VerticalAlignment="Center" ToolTip.Tip="{Binding Status}" />    </Grid>
+  </Border>
+</UserControl>
+
+
+

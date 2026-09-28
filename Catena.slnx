@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Catena.AI/Catena.AI.csproj" />
+    <Project Path="src/Catena.App/Catena.App.csproj" />
+    <Project Path="src/Catena.Contracts/Catena.Contracts.csproj" />
+    <Project Path="src/Catena.Core/Catena.Core.csproj" />
+    <Project Path="src/Catena.Persistence/Catena.Persistence.csproj" />
+    <Project Path="src/Catena.Platform.Windows/Catena.Platform.Windows.csproj" />
+    <Project Path="src/Catena.Search.Everything/Catena.Search.Everything.csproj" />
+    <Project Path="src/Catena.Storage.Local/Catena.Storage.Local.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Catena.Tests/Catena.Tests.csproj" />
+  </Folder>
+</Solution>

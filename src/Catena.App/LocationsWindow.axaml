@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Catena.App.LocationsWindow"
+        Title="常用位置与记录" Icon="avares://Catena.App/Assets/catena.ico" Width="760" Height="590" MinWidth="600" MinHeight="450" Background="{DynamicResource CatenaSurface}" WindowStartupLocation="CenterOwner">
+  <Grid Margin="16" RowDefinitions="Auto,*,Auto,Auto" RowSpacing="12">
+    <Grid ColumnDefinitions="*,Auto">
+      <Button Content="添加文件夹…" Click="AddFolder" HorizontalAlignment="Left" />
+      <Button Grid.Column="1" Content="清除近期记录" Command="{Binding ClearRecentCommand}" />
+    </Grid>
+    <Grid Grid.Row="1" ColumnDefinitions="260,*" ColumnSpacing="16">
+      <ListBox ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedRoot, Mode=TwoWay}">
+        <ListBox.ItemTemplate><DataTemplate><StackPanel Spacing="4" Margin="2,5">
+          <TextBlock Text="{Binding Name}" FontWeight="SemiBold" /><TextBlock Text="{Binding Summary}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" />
+        </StackPanel></DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+      <ScrollViewer Grid.Column="1"><SelectableTextBlock Text="{Binding SelectedRoot.Details}" TextWrapping="Wrap" /></ScrollViewer>
+    </Grid>
+    <TextBlock Grid.Row="2" Text="{Binding Status}" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" />
+    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+      <Button Content="更新缓存" Command="{Binding RefreshCommand}" CommandParameter="{Binding SelectedRoot}" />
+      <Button Content="取消更新" Command="{Binding CancelCommand}" CommandParameter="{Binding SelectedRoot}" IsVisible="{Binding SelectedRoot.IsScanning}" />
+      <Button Content="移除" Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedRoot}" ToolTip.Tip="仅移除常用位置与结构缓存，保留原文件" />
+      <Button Content="关闭" Click="CloseWindow" />
+    </StackPanel>
+  </Grid>
+</Window>

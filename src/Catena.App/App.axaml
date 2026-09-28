@@ -1,0 +1,66 @@
+<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Catena.App.App" RequestedThemeVariant="Default">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light"><Color x:Key="CatenaGlassTint">#F4F7FC</Color>
+          <SolidColorBrush x:Key="CatenaWindow">#F5F7FA</SolidColorBrush><SolidColorBrush x:Key="CatenaSurface">#FFFFFF</SolidColorBrush>
+          <SolidColorBrush x:Key="CatenaBorder">#E4E8EF</SolidColorBrush><SolidColorBrush x:Key="CatenaSecondary">#768092</SolidColorBrush>
+          <SolidColorBrush x:Key="CatenaAccent">#1266D6</SolidColorBrush><SolidColorBrush x:Key="CatenaHover">#F0F5FC</SolidColorBrush><SolidColorBrush x:Key="CatenaSelection">#E2EEFF</SolidColorBrush><SolidColorBrush x:Key="CatenaRowBorder">#F0F2F6</SolidColorBrush><SolidColorBrush x:Key="CatenaText">#202B3E</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark"><Color x:Key="CatenaGlassTint">#20242B</Color>
+          <SolidColorBrush x:Key="CatenaWindow">#202020</SolidColorBrush><SolidColorBrush x:Key="CatenaSurface">#191919</SolidColorBrush>
+          <SolidColorBrush x:Key="CatenaBorder">#383838</SolidColorBrush><SolidColorBrush x:Key="CatenaSecondary">#B2B2B2</SolidColorBrush>
+          <SolidColorBrush x:Key="CatenaAccent">#60CDFF</SolidColorBrush><SolidColorBrush x:Key="CatenaHover">#2D343B</SolidColorBrush><SolidColorBrush x:Key="CatenaSelection">#263F59</SolidColorBrush><SolidColorBrush x:Key="CatenaRowBorder">#252B32</SolidColorBrush><SolidColorBrush x:Key="CatenaText">#E1E8F0</SolidColorBrush>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <ControlTheme x:Key="CatenaButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource CatenaSurface}" /><Setter Property="Foreground" Value="{DynamicResource CatenaText}" /><Setter Property="BorderBrush" Value="{DynamicResource CatenaBorder}" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="4" /><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template"><ControlTemplate><Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"><ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" /></Border></ControlTemplate></Setter>
+        <Style Selector="^:pointerover /template/ Border#Chrome"><Setter Property="Background" Value="{DynamicResource CatenaHover}" /></Style>
+        <Style Selector="^:pressed /template/ Border#Chrome"><Setter Property="Background" Value="{DynamicResource CatenaSelection}" /></Style>
+        <Style Selector="^:focus-visible /template/ Border#Chrome"><Setter Property="BorderBrush" Value="{DynamicResource CatenaAccent}" /></Style>
+        <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.38" /></Style>
+      </ControlTheme>
+      <ControlTheme x:Key="CatenaToggle" TargetType="ToggleButton" BasedOn="{StaticResource CatenaButton}">
+        <Style Selector="^:checked"><Setter Property="Foreground" Value="{DynamicResource CatenaAccent}" /></Style>
+        <Style Selector="^:checked /template/ Border#Chrome"><Setter Property="Background" Value="{DynamicResource CatenaSelection}" /></Style>
+      </ControlTheme>
+      <ControlTheme x:Key="CatenaFileRow" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="{DynamicResource CatenaText}" />
+        <Setter Property="Template"><ControlTemplate><Border x:Name="Row" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}"><ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalContentAlignment="Stretch" /></Border></ControlTemplate></Setter>
+        <Style Selector="^:pointerover /template/ Border#Row"><Setter Property="Background" Value="{DynamicResource CatenaHover}" /></Style>
+        <Style Selector="^:selected /template/ Border#Row"><Setter Property="Background" Value="{DynamicResource CatenaSelection}" /></Style>
+      </ControlTheme>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="Window"><Setter Property="Foreground" Value="{DynamicResource CatenaText}" /><Setter Property="FontFamily" Value="Segoe UI,Microsoft YaHei UI" /><Setter Property="FontSize" Value="13" /></Style>
+    <Style Selector="Button"><Setter Property="Theme" Value="{StaticResource CatenaButton}" /><Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="10,5" /></Style>
+    <Style Selector="ToggleButton"><Setter Property="Theme" Value="{StaticResource CatenaToggle}" /></Style>
+    <Style Selector="TextBox"><Setter Property="MinHeight" Value="32" /></Style>
+    <Style Selector="Button.icon, ToggleButton.icon"><Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" /><Setter Property="Padding" Value="7" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /></Style>
+    <Style Selector="Button.icon.small"><Setter Property="Width" Value="25" /><Setter Property="Padding" Value="3" /></Style>
+    <Style Selector="Button.segment"><Setter Property="Width" Value="34" /><Setter Property="Height" Value="34" /><Setter Property="Padding" Value="7" /><Setter Property="BorderThickness" Value="0,0,1,0" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Background" Value="Transparent" /></Style>
+    <Style Selector="Button.segment.chosen"><Setter Property="Background" Value="{DynamicResource CatenaSelection}" /><Setter Property="BorderBrush" Value="#86B4FC" /><Setter Property="BorderThickness" Value="1" /></Style>
+    <Style Selector="Button.caption"><Setter Property="Width" Value="44" /><Setter Property="Height" Value="40" /><Setter Property="Padding" Value="10" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="CornerRadius" Value="0" /></Style>
+    <Style Selector="Button.caption.close:pointerover /template/ Border#Chrome"><Setter Property="Background" Value="#E34B50" /></Style>
+    <Style Selector="Button.searchEntry"><Setter Property="Padding" Value="10,4" /></Style>
+    <Style Selector="ToggleSwitch.previewSwitch"><Setter Property="MinWidth" Value="38" /><Setter Property="Width" Value="38" /><Setter Property="Height" Value="24" /><Setter Property="Template"><ControlTemplate><Border x:Name="SwitchTrack" Background="#A6ADBA" CornerRadius="11" Width="36" Height="20"><Panel x:Name="PART_MovingKnobs"><Thumb x:Name="PART_Thumb" Opacity="0" /><Ellipse x:Name="SwitchThumb" Fill="White" Width="14" Height="14" Margin="3" HorizontalAlignment="Left" /></Panel></Border></ControlTemplate></Setter></Style>
+    <Style Selector="ToggleSwitch.previewSwitch:checked /template/ Border#SwitchTrack"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /></Style>
+    <Style Selector="ToggleSwitch.previewSwitch:checked /template/ Ellipse#SwitchThumb"><Setter Property="HorizontalAlignment" Value="Right" /></Style>
+    <Style Selector="Button.chosen"><Setter Property="Background" Value="{DynamicResource CatenaHover}" /><Setter Property="Foreground" Value="{DynamicResource CatenaAccent}" /></Style>
+    <Style Selector="Button.previewAction"><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="2,6" /></Style>
+    <Style Selector="Button.primary"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /><Setter Property="Foreground" Value="White" /></Style>
+    <Style Selector="ToolTip"><Setter Property="MaxWidth" Value="600" /></Style>
+    <Style Selector="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+    <Style Selector="GridSplitter"><Setter Property="Background" Value="Transparent" /></Style>
+    <Style Selector="GridSplitter:pointerover"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /></Style>
+    <Style Selector="GridSplitter:focus"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /></Style>
+  </Application.Styles>
+</Application>
+
+
+
+
+

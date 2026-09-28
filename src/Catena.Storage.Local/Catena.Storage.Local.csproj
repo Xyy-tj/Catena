@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="../Catena.Contracts/Catena.Contracts.csproj" /></ItemGroup>
+</Project>

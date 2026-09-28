@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Catena.App.SettingsWindow"
+        Title="Catena · 设置" Icon="avares://Catena.App/Assets/catena.ico" Background="{DynamicResource CatenaSurface}" Width="820" Height="640" MinWidth="680" MinHeight="520" WindowStartupLocation="CenterOwner">
+  <Window.Styles><Style Selector="TabItem"><Setter Property="FontSize" Value="14" /><Setter Property="Padding" Value="12,12" /><Setter Property="MinWidth" Value="124" /></Style></Window.Styles>
+  <Grid RowDefinitions="Auto,*,Auto" Margin="24" RowSpacing="16">
+    <Grid ColumnDefinitions="*,Auto"><TextBlock Text="设置" FontSize="23" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="用户设置" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" ToolTip.Tip="保存在当前 Windows 用户下；窗格布局和缩放随工作区保存" /></Grid>
+    <TabControl x:Name="SettingsTabs" Grid.Row="1" TabStripPlacement="Left">
+      <TabItem Header="常规"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="14" IsEnabled="{Binding CanEdit}">
+        <TextBlock Text="文件查找" FontSize="18" FontWeight="SemiBold" />
+        <TextBlock Text="默认搜索范围" />
+        <ComboBox SelectedIndex="{Binding DefaultSearchScope, Mode=TwoWay}" HorizontalAlignment="Stretch"><ComboBoxItem Content="此电脑" /><ComboBoxItem Content="当前窗格及子文件夹" /><ComboBoxItem Content="工作区及子文件夹" /></ComboBox>
+        <TextBlock Text="结果上限" />
+        <NumericUpDown Value="{Binding SearchResultLimit, Mode=TwoWay}" Minimum="50" Maximum="1000" Increment="50" Width="140" HorizontalAlignment="Left" />
+        <Separator Margin="0,12" /><TextBlock Text="工作区" FontSize="18" FontWeight="SemiBold" />
+        <TextBlock Text="路径、布局、选中项和窗格缩放自动保存。" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" />
+      </StackPanel></ScrollViewer></TabItem>
+      <TabItem Header="外观"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="14" IsEnabled="{Binding CanEdit}">
+        <TextBlock Text="主题" FontSize="18" FontWeight="SemiBold" />
+        <ComboBox SelectedIndex="{Binding Theme, Mode=TwoWay}" HorizontalAlignment="Stretch"><ComboBoxItem Content="跟随系统" /><ComboBoxItem Content="浅色" /><ComboBoxItem Content="深色" /></ComboBox>
+        <TextBlock Text="背景皮肤" />
+        <ComboBox SelectedIndex="{Binding Skin, Mode=TwoWay}" HorizontalAlignment="Stretch"><ComboBoxItem Content="纯净" /><ComboBoxItem Content="蓝雾" /></ComboBox>
+        <TextBlock Text="背景浓度" /><Slider Value="{Binding BackgroundOpacity, Mode=TwoWay}" Minimum="0" Maximum="1" TickFrequency="0.1" />
+        <TextBlock Text="Ctrl + 滚轮调整当前窗格的列表大小。" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" />
+      </StackPanel></ScrollViewer></TabItem>
+      <TabItem Header="Everything"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="14" IsEnabled="{Binding CanEdit}">
+        <TextBlock Text="快速索引" FontSize="18" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="检查连接" Command="{Binding TestEverythingCommand}" /><Button Content="安装组件" Command="{Binding InstallSearchCommand}" IsEnabled="{Binding CanInstallSearch}" /></StackPanel>
+        <Expander Header="高级" HorizontalAlignment="Stretch"><StackPanel Spacing="10"><TextBlock Text="Everything 实例名" /><TextBox Text="{Binding EverythingInstance, Mode=TwoWay}" PlaceholderText="留空自动检测" /></StackPanel></Expander>
+      </StackPanel></ScrollViewer></TabItem>
+      <TabItem Header="AI 功能"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="10" IsEnabled="{Binding CanEdit}">
+        <TextBlock Text="OpenAI 兼容接口" FontSize="18" FontWeight="SemiBold" />
+        <TextBlock Text="Base URL" /><TextBox Text="{Binding AiBaseUrl, Mode=TwoWay}" PlaceholderText="https://你的服务/v1" />
+        <TextBlock Text="模型 ID" /><TextBox Text="{Binding AiModel, Mode=TwoWay}" PlaceholderText="服务商提供的模型 ID" />
+        <TextBlock Text="API Key" /><TextBox Text="{Binding ApiKey, Mode=TwoWay}" PasswordChar="●" PlaceholderText="{Binding KeyPlaceholder}" />
+        <CheckBox Content="清除已保存的 API Key" IsChecked="{Binding ClearApiKey, Mode=TwoWay}" />
+        <StackPanel Orientation="Horizontal" Spacing="10"><TextBlock Text="超时（秒）" VerticalAlignment="Center" /><NumericUpDown Value="{Binding TimeoutSeconds, Mode=TwoWay}" Minimum="5" Maximum="120" Width="110" /><Button Content="测试连接" Command="{Binding TestAiCommand}" /></StackPanel>
+      </StackPanel></ScrollViewer></TabItem>
+      <TabItem Header="关于"><StackPanel Margin="24,8,0,0" Spacing="14"><Image Source="avares://Catena.App/Assets/catena-64.png" Width="48" Height="48" HorizontalAlignment="Left" /><TextBlock Text="Catena" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="多窗格文件管理与 AI 辅助查找" /><TextBlock Text="本地运行 · Everything 索引 · OpenAI 兼容接口" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel></TabItem>
+      <TabItem Header="帮助"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="14"><TextBlock Text="快捷键" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="Ctrl + K    搜索&#10;Ctrl + L    编辑当前路径&#10;Ctrl + 滚轮    缩放文件列表&#10;F6    切换窗格&#10;F5    刷新&#10;Alt + P    显示 / 隐藏预览&#10;Alt + ← / →    后退 / 前进&#10;Alt + ↑    上级目录" LineHeight="28" /><Separator /><TextBlock Text="索引未就绪时，可在结果窗口选择扫描当前目录。在线文件仅展示元数据，预览不会自动下载正文。" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel></ScrollViewer></TabItem>
+    </TabControl>
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+      <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" />
+      <Button Grid.Column="1" Content="取消测试" Command="{Binding CancelTestCommand}" IsVisible="{Binding IsTesting}" />
+      <Button Grid.Column="2" Content="保存" Command="{Binding SaveCommand}" IsEnabled="{Binding CanEdit}" />
+      <Button Grid.Column="3" Content="关闭" Click="CloseSettings" />
+    </Grid>
+  </Grid>
+</Window>

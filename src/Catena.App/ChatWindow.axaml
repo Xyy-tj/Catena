@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Catena.App" x:Class="Catena.App.ChatWindow"
+        Title="Catena · AI 对话" Icon="avares://Catena.App/Assets/catena.ico" Width="760" Height="760" MinWidth="560" MinHeight="500" WindowStartupLocation="CenterOwner"
+        Background="Transparent" TransparencyLevelHint="AcrylicBlur,Blur" TransparencyBackgroundFallback="{DynamicResource CatenaSurface}">
+  <Window.Styles>
+    <Style Selector="Border.message"><Setter Property="Margin" Value="0,0,18,12" /><Setter Property="HorizontalAlignment" Value="Stretch" /></Style>
+    <Style Selector="Border.message.user"><Setter Property="Background" Value="{DynamicResource CatenaHover}" /><Setter Property="HorizontalAlignment" Value="Right" /><Setter Property="Margin" Value="60,0,0,12" /></Style>
+  </Window.Styles>
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False"><ExperimentalAcrylicBorder.Material><ExperimentalAcrylicMaterial TintColor="{DynamicResource CatenaGlassTint}" TintOpacity="0.96" MaterialOpacity="0.96" /></ExperimentalAcrylicBorder.Material></ExperimentalAcrylicBorder>
+    <Grid Margin="20,14" RowDefinitions="Auto,*,Auto,Auto" RowSpacing="12">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+        <StackPanel Spacing="3"><TextBlock Text="{Binding ModelName}" FontWeight="SemiBold" FontSize="15" /><TextBlock Text="{Binding Folder}" FontSize="11" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CatenaSecondary}" ToolTip.Tip="{Binding Folder}" /></StackPanel>
+        <Button Grid.Column="1" Content="新对话" Command="{Binding NewConversationCommand}" IsEnabled="{Binding CanCompose}" />
+      </Grid>
+      <Grid Grid.Row="1">
+        <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="14">
+          <TextBlock Text="一起整理这个文件夹" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
+          <Button Content="建议一个清晰的目录结构" Click="UseSuggestion" HorizontalAlignment="Center" />
+          <Button Content="哪些文件适合归档？" Click="UseSuggestion" HorizontalAlignment="Center" />
+        </StackPanel>
+        <ScrollViewer x:Name="ConversationScroll" IsVisible="{Binding !IsEmpty}" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding Messages}">
+            <ItemsControl.ItemTemplate><DataTemplate>
+              <Border Classes="message" Classes.user="{Binding IsUser}" CornerRadius="14" Padding="14,10">
+                <StackPanel Spacing="6">
+                  <TextBlock Text="{Binding Author}" FontSize="11" Foreground="{DynamicResource CatenaSecondary}" />
+                  <ItemsControl ItemsSource="{Binding Attachments}"><ItemsControl.ItemTemplate><DataTemplate>
+                    <Border BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0,0,0,4"><StackPanel Spacing="4"><Image Source="{Binding Thumbnail}" Height="96" Stretch="Uniform" IsVisible="{Binding HasThumbnail}" /><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Label}" FontSize="11" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel></Border>
+                  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                  <local:ChatMarkdownView Text="{Binding Text}" />
+                  <Button Content="复制" Click="CopyMessage" IsVisible="{Binding !IsUser}" FontSize="11" Padding="6,2" MinHeight="24" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Border>
+            </DataTemplate></ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+      <Border Grid.Row="2" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="14" Padding="10">
+        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+          <ItemsControl ItemsSource="{Binding Attachments}"><ItemsControl.ItemTemplate><DataTemplate>
+            <Border BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="6" Padding="6" Margin="0,0,0,4">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8"><Image Source="{Binding Thumbnail}" Width="36" Height="36" Stretch="Uniform" /><StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Label}" FontSize="11" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel><Button Grid.Column="2" Content="×" Click="RemoveAttachment" ToolTip.Tip="移除附件" /></Grid>
+            </Border>
+          </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          <TextBox x:Name="Composer" Grid.Row="1" Text="{Binding Draft, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="160" BorderThickness="0" Background="Transparent" PlaceholderText="询问整理建议，或粘贴文件 / 图片…" IsReadOnly="{Binding IsSending}" KeyDown="ComposerKeyDown" />
+          <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+            <Button Content="＋" Click="ChooseAttachments" IsEnabled="{Binding CanCompose}" ToolTip.Tip="添加文件或图片 · Ctrl+V 粘贴" />
+            <CheckBox Grid.Column="1" Content="目录概况" IsChecked="{Binding IncludeContext, Mode=TwoWay}" IsEnabled="{Binding CanCompose}" FontSize="12" Margin="8,0" ToolTip.Tip="发送时附上当前路径、最多 120 个可见条目的元数据，以及此位置已有的结构统计。不读取文件正文。" />
+            <Button Grid.Column="2" Classes="primary" Content="发送 ↑" Command="{Binding SendCommand}" IsVisible="{Binding !IsSending}" IsEnabled="{Binding CanCompose}" ToolTip.Tip="Enter 发送 · Shift+Enter 换行" />
+            <Button Grid.Column="2" Content="停止 ■" Command="{Binding StopCommand}" IsVisible="{Binding IsSending}" />
+          </Grid>
+        </Grid>
+      </Border>
+      <TextBlock Grid.Row="3" Text="{Binding Status}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" />
+    </Grid>
+  </Panel>
+</Window>
+

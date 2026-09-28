@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Catena.App" x:Class="Catena.App.PreviewView">
+  <Grid RowDefinitions="*,Auto" RowSpacing="16" Margin="14,4,14,16">
+    <Border Background="{DynamicResource CatenaWindow}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" Padding="12" MinHeight="100">
+      <Grid>
+        <local:DocumentPreviewHost x:Name="DocumentHost" FilePath="{Binding NativePath}" IsVisible="{Binding HasNative}" />
+        <Image Source="{Binding Image}" Stretch="Uniform" IsVisible="{Binding HasImage}" />
+        <ScrollViewer IsVisible="{Binding HasText}" HorizontalScrollBarVisibility="Disabled"><SelectableTextBlock Text="{Binding Text}" TextWrapping="Wrap" FontFamily="Cascadia Code,Consolas,Microsoft YaHei UI" FontSize="12" LineHeight="21" /></ScrollViewer>
+        <StackPanel IsVisible="{Binding IsInformation}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="14"><local:FileIconView Entry="{Binding Entry}" Width="64" Height="64" IsVisible="{Binding HasEntry}" /><TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" HorizontalAlignment="Center" /></StackPanel>
+      </Grid>
+    </Border>
+    <StackPanel Grid.Row="1" Spacing="14" IsVisible="{Binding HasEntry}">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" IsVisible="{Binding HasPages}"><Button Classes="icon" Command="{Binding PreviousPageCommand}" IsEnabled="{Binding CanPreviousPage}" ToolTip.Tip="上一页"><local:UiIcon Kind="back" /></Button><TextBlock Text="{Binding PageLabel}" VerticalAlignment="Center" /><Button Classes="icon" Command="{Binding NextPageCommand}" IsEnabled="{Binding CanNextPage}" ToolTip.Tip="下一页"><local:UiIcon Kind="forward" /></Button></StackPanel>
+      <Grid ColumnDefinitions="36,*" ColumnSpacing="10"><local:FileIconView Entry="{Binding Entry}" Width="32" Height="32" /><SelectableTextBlock Grid.Column="1" Text="{Binding Entry.Name}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center" /></Grid>
+      <StackPanel>
+        <Border BorderBrush="{DynamicResource CatenaRowBorder}" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="76,*" MinHeight="34"><TextBlock Text="类型" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Grid.Column="1" Text="{Binding Entry.TypeText}" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /></Grid></Border>
+        <Border BorderBrush="{DynamicResource CatenaRowBorder}" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="76,*" MinHeight="34"><TextBlock Text="大小" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Grid.Column="1" Text="{Binding FullSize}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FullSize}" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /></Grid></Border>
+        <Border BorderBrush="{DynamicResource CatenaRowBorder}" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="76,*" MinHeight="34"><TextBlock Text="修改时间" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Grid.Column="1" Text="{Binding Entry.ModifiedText}" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /></Grid></Border>
+        <Border BorderBrush="{DynamicResource CatenaRowBorder}" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="76,*" MinHeight="40"><TextBlock Text="位置" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Grid.Column="1" Text="{Binding Entry.DisplayPath}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Entry.DisplayPath}" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" /></Grid></Border>
+      </StackPanel>
+      <TextBlock Text="{Binding Notice}" IsVisible="{Binding !IsInformation}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource CatenaSecondary}" />
+      <Button Classes="primary" Command="{Binding OpenCommand}" HorizontalAlignment="Stretch" Height="44"><StackPanel Orientation="Horizontal" Spacing="12"><local:UiIcon Kind="open" Foreground="White" /><TextBlock Text="打开文件" VerticalAlignment="Center" /></StackPanel></Button>
+      <TextBlock Text="更多操作" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" />
+      <UniformGrid Columns="3">
+        <Button Classes="previewAction" Command="{Binding RevealCommand}" ToolTip.Tip="在资源管理器中显示"><StackPanel Spacing="8"><local:UiIcon Kind="folder" Width="22" Height="22" HorizontalAlignment="Center" /><TextBlock Text="打开所在位置" FontSize="11" HorizontalAlignment="Center" /></StackPanel></Button>
+        <Button Classes="previewAction" Click="CopyPath" ToolTip.Tip="复制完整路径"><StackPanel Spacing="8"><local:UiIcon Kind="copy" Width="22" Height="22" HorizontalAlignment="Center" /><TextBlock Text="复制路径" FontSize="11" HorizontalAlignment="Center" /></StackPanel></Button>
+        <Button Classes="previewAction" Command="{Binding TerminalCommand}" ToolTip.Tip="在所在目录打开终端"><StackPanel Spacing="8"><local:UiIcon Kind="terminal" Width="22" Height="22" HorizontalAlignment="Center" /><TextBlock Text="打开终端" FontSize="11" HorizontalAlignment="Center" /></StackPanel></Button>
+      </UniformGrid>
+    </StackPanel>
+  </Grid>
+</UserControl>

@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Catena.App" x:Class="Catena.App.SearchWindow"
+        Title="{Binding Caption}" Icon="avares://Catena.App/Assets/catena.ico" Width="720" Height="510" MinWidth="500" MinHeight="330" WindowStartupLocation="CenterOwner"
+        Background="Transparent" TransparencyLevelHint="AcrylicBlur,Blur" TransparencyBackgroundFallback="{DynamicResource CatenaSurface}">
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False"><ExperimentalAcrylicBorder.Material><ExperimentalAcrylicMaterial TintColor="{DynamicResource CatenaGlassTint}" TintOpacity="0.96" MaterialOpacity="0.96" /></ExperimentalAcrylicBorder.Material></ExperimentalAcrylicBorder>
+    <Grid Margin="16" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+        <local:UiIcon Kind="search" />
+        <TextBlock Grid.Column="1" Text="{Binding Query}" FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+        <Button Grid.Column="2" Content="修改条件" Click="RefineSearch" />
+      </Grid>
+      <TextBlock Grid.Row="1" Text="{Binding PlanSummary}" IsVisible="{Binding HasPlan}" MaxHeight="40" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" />
+      <Border Grid.Row="2" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="5">
+        <ListBox x:Name="SearchResultList" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" DoubleTapped="LocateResult" KeyDown="ResultKeyDown" Background="Transparent" BorderThickness="0">
+          <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+          <ListBox.Styles><Style Selector="ListBoxItem"><Setter Property="Padding" Value="8,6" /></Style></ListBox.Styles>
+          <ListBox.ItemTemplate><DataTemplate><Grid ColumnDefinitions="28,*,70" ColumnSpacing="6" ToolTip.Tip="{Binding DisplayPath}">
+            <local:FileIconView Entry="{Binding}" Width="24" Height="24" />
+            <StackPanel Grid.Column="1" Spacing="2"><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding DisplayPath}" TextTrimming="CharacterEllipsis" FontSize="11" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel>
+            <TextBlock Grid.Column="2" Text="{Binding SizeText}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" />
+          </Grid></DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+      </Border>
+      <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+        <TextBlock Text="{Binding Status}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Status}" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource CatenaSecondary}" />
+        <Button Grid.Column="1" Content="扫描当前目录" IsVisible="{Binding CanSearchCurrentFolder}" Command="{Binding SearchCurrentFolderCommand}" />
+        <Button Grid.Column="1" Content="停止" IsVisible="{Binding IsSearching}" Command="{Binding CancelCommand}" />
+        <Button Grid.Column="2" Content="定位" Command="{Binding LocateCommand}" />
+      </Grid>
+    </Grid>
+  </Panel>
+</Window>
