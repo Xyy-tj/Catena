@@ -25,7 +25,7 @@ public sealed partial class App : Application
                 .AddSingleton<ILocationProvider>(s => s.GetRequiredService<LocalFileSystemProvider>())
                 .AddSingleton<ISearchProvider, LocalSearchProvider>()
                 .AddSingleton<LocalFilePreviewProvider>()
-                .AddSingleton<IFilePreviewProvider>(s => new PowerPointPreviewProvider(new WindowsDocumentPreviewProvider(s.GetRequiredService<LocalFilePreviewProvider>())))
+                .AddSingleton<IFilePreviewProvider>(s => new WindowsDocumentPreviewProvider(new PowerPointPreviewProvider(s.GetRequiredService<LocalFilePreviewProvider>())))
                 .AddSingleton<IEsProcessRunner, EsProcessRunner>()
                 .AddSingleton<IEverythingIpcClient, EverythingIpcClient>()
                 .AddSingleton<IEverythingHost, WindowsEverythingHost>()

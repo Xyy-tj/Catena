@@ -1,0 +1,13 @@
+Downloaded 2026-09-28 from the upstream repositories.
+
+settings.svg: Lucide, ISC license
+https://github.com/lucide-icons/lucide/blob/main/icons/settings.svg
+License: Lucide-LICENSE.txt (also includes Feather attribution for inherited icons).
+UiIcon.cs combines the path and circle, using the app's existing 1.7 px outline.
+
+github.svg: GitHub Octicons mark-github-16, MIT license
+https://github.com/primer/octicons/blob/main/icons/mark-github-16.svg
+License: Octicons-LICENSE.txt.
+UiIcon.cs uses the original filled path with a 16-unit view box.
+
+Both geometries are parsed once and drawn locally. No icon library or network request is required at runtime.

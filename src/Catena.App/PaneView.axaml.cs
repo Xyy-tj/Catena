@@ -22,7 +22,7 @@ public sealed partial class PaneView : UserControl
         AddHandler(PointerPressedEvent, (_, _) => Activate(), RoutingStrategies.Tunnel);
         AddHandler(PointerWheelChangedEvent, ZoomList, RoutingStrategies.Tunnel);
         GotFocus += (_, _) => Activate();
-        FileList.AddHandler(PointerReleasedEvent, ShowFileMenu, RoutingStrategies.Bubble, handledEventsToo: true);
+        FileList.ContextRequested += ShowFileMenu;
         AttachedToVisualTree += (_, _) => { ModelChanged(this, new PropertyChangedEventArgs(nameof(PaneViewModel.Entries))); RebuildBreadcrumbs(); };
         DataContextChanged += (_, _) =>
         {
@@ -33,26 +33,6 @@ public sealed partial class PaneView : UserControl
         DetachedFromVisualTree += (_, _) => { detached = true; if (previous is not null) { previous.PropertyChanged -= ModelChanged; previous.EntriesUpdating -= BeginEntriesUpdate; } };
     }
     private void BeginEntriesUpdate() => restoring = true;
-    private async void ShowFileMenu(object? sender, PointerReleasedEventArgs e)
-    {
-        if (e.InitialPressMouseButton != MouseButton.Right || Model is not { } pane || e.Source is not Avalonia.Visual source) return;
-        var row = source as ListBoxItem ?? source.GetVisualAncestors().OfType<ListBoxItem>().FirstOrDefault();
-        if (row?.DataContext is not FileEntry entry) return;
-        if (FileList.SelectedItems?.Contains(entry) != true) FileList.SelectedItem = entry;
-        var selected = FileList.SelectedItems?.OfType<FileEntry>().ToArray() ?? [entry];
-        if (!OperatingSystem.IsWindows() || TopLevel.GetTopLevel(this) is not { } top || top.TryGetPlatformHandle() is not { HandleDescriptor: "HWND" } handle) return;
-        e.Handled = true;
-        try
-        {
-            var point = top.PointToScreen(e.GetPosition(top));
-            var action = WindowsShellMenu.Show(selected.Select(x => x.DisplayPath).ToArray(), handle.Handle, point.X, point.Y, selected.Length == 1 && entry.IsDirectory);
-            if (action == WindowsShellMenu.Action.Open) await pane.NavigateAsync(entry.Location);
-            else if (action == WindowsShellMenu.Action.Rename && top is Window owner) await RenameFile(owner, entry, pane);
-            else if (action == WindowsShellMenu.Action.Refresh) await pane.RefreshCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or ArgumentException or IOException or UnauthorizedAccessException)
-        { pane.Status = "无法打开 Windows 文件菜单。"; }
-    }
     private static async Task RenameFile(Window owner, FileEntry entry, PaneViewModel pane)
     {
         var dialog = new Window { Title = "重命名", Width = 420, Height = 190, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
@@ -207,4 +187,3 @@ public sealed partial class PaneView : UserControl
         catch (Exception) { pane.Status = "复制失败，剪贴板暂不可用。"; }
     }
 }
-

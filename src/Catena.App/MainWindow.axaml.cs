@@ -17,6 +17,14 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        PropertyChanged += (_, e) =>
+        {
+            if (e.Property == WindowStateProperty)
+            {
+                GlobalSearchEntry.MaxWidth = WindowState == WindowState.Maximized ? 744 : 400;
+                MaximizeIcon.Kind = WindowState == WindowState.Maximized ? "restore" : "maximize";
+            }
+        };
         Opened += async (_, _) =>
         {
             if (Model is { } model)

@@ -68,8 +68,7 @@
           </Grid>
         </Border>
         <GridSplitter Grid.Column="1" IsVisible="{Binding TreeVisible}" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="SizeWestEast" DragIncrement="1" DragCompleted="TreeDragCompleted" />
-        <LayoutTransformControl Grid.Column="2">
-          <LayoutTransformControl.LayoutTransform><ScaleTransform ScaleX="{Binding ListZoom}" ScaleY="{Binding ListZoom}" /></LayoutTransformControl.LayoutTransform>
+        <local:FileListZoom Grid.Column="2" Zoom="{Binding ListZoom}">
         <Grid RowDefinitions="Auto,*" RowSpacing="6">
       <Grid ColumnDefinitions="30,*,96,130" Height="28" Margin="8,0" SizeChanged="DetailRowSizeChanged">
         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center"><TextBlock Text="名称" Foreground="{DynamicResource CatenaSecondary}" /><TextBlock Text="▴" FontSize="10" Foreground="{DynamicResource CatenaSecondary}" VerticalAlignment="Center" /></StackPanel>
@@ -90,7 +89,7 @@
         </DataTemplate></ListBox.ItemTemplate>
       </ListBox>
         </Grid>
-        </LayoutTransformControl>
+        </local:FileListZoom>
       </Grid>
       <TextBlock Grid.Row="4" Text="{Binding Status}" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" TextTrimming="CharacterEllipsis" Margin="8,8,0,5" VerticalAlignment="Center" ToolTip.Tip="{Binding Status}" />    </Grid>
   </Border>

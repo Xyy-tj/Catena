@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0-windows10.0.19041.0</TargetFramework><SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion><ApplicationManifest>app.manifest</ApplicationManifest></PropertyGroup>
-  <PropertyGroup><OutputType>WinExe</OutputType><AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault><ApplicationIcon>Assets/catena.ico</ApplicationIcon><Version>0.6.0</Version></PropertyGroup>
+  <PropertyGroup><OutputType>WinExe</OutputType><AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault><ApplicationIcon>Assets/catena.ico</ApplicationIcon><Version>0.6.2</Version></PropertyGroup>
   <ItemGroup><AvaloniaResource Include="Assets/catena-64.png" /><AvaloniaResource Include="Assets/catena.ico" /><AvaloniaResource Include="Assets/blue-mist.png" /></ItemGroup>
   <ItemGroup>
+    <Content Include="Assets/ThirdParty/*LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <ProjectReference Include="../Catena.Core/Catena.Core.csproj" />
     <ProjectReference Include="../Catena.AI/Catena.AI.csproj" />
     <ProjectReference Include="../Catena.Search.Everything/Catena.Search.Everything.csproj" />
@@ -23,5 +24,3 @@
     <ItemGroup><ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(ResolvedFileToPublish.Extension)' == '.pdb'" /></ItemGroup>
   </Target>
 </Project>
-
-

@@ -1,6 +1,6 @@
 # 安装与依赖分发
 
-默认交付物为 Windows x64 离线安装包 `artifacts/installer/Catena-0.6.0-win-x64-Setup.exe`，由 Inno Setup 6.7.3 编译。当前约 43.6 MB，不包含调试符号。应用和 .NET 运行时随包安装。
+默认交付物为 Windows x64 离线安装包 `artifacts/installer/Catena-0.6.2-win-x64-Setup.exe`，由 Inno Setup 6.7.3 编译。当前约 43.6 MB，不包含调试符号。应用和 .NET 运行时随包安装。
 
 ## 用户流程
 
@@ -23,7 +23,7 @@ Catena 使用稳定 AppId 安装到 Program Files 下。升级保留 `%LOCALAPPD
 
 ```powershell
 ./scripts/dev.ps1 restore
-./scripts/package.ps1 -Version 0.6.0
+./scripts/package.ps1 -Version 0.6.2
 # 自定义编译器位置
 ./scripts/package.ps1 -Compiler 'C:/Program Files (x86)/Inno Setup 6/ISCC.exe'
 ```
@@ -47,3 +47,6 @@ Catena 使用稳定 AppId 安装到 Program Files 下。升级保留 `%LOCALAPPD
 - [安装目录发现](https://www.voidtools.com/forum/viewtopic.php?t=15447)说明 InstallLocation 注册表值和 IPC 窗口查询。
 - [Everything 许可](https://www.voidtools.com/License.txt)原文随包分发。
 - [Inno Setup](https://jrsoftware.org/isinfo.php)用于生成安装器；常用安装页面的中文文案由本项目维护，其余诊断继承编译器默认文案。
+
+2026-09-29 的 0.6.1 回归为 80 项通过、1 项跳过。包含真实 PowerPoint/Word 预览处理程序加载与容器缩放、预览回退及翻页、OneDrive 在线文档保护，以及目录树开启后的缩放列表对齐。Everything 外部索引集成测试本轮未启用。
+最终 EXE 在独立数据目录启动并正常退出，返回码 0，输出 CATENA_SMOKE_READY panes=2 persistence=True。

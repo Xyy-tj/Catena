@@ -10,3 +10,8 @@ public interface IPagePreviewProvider : IFilePreviewProvider
 {
     Task<FilePreview> ReadPageAsync(FileEntry entry, int page, CancellationToken token = default);
 }
+
+public interface IFallbackPreviewProvider : IPagePreviewProvider
+{
+    Task<FilePreview> ReadFallbackPageAsync(FileEntry entry, int page, CancellationToken token = default);
+}

@@ -101,7 +101,7 @@ public sealed class PowerPointPreviewProvider(IFilePreviewProvider fallback) : I
                 canvas.Restore(); fallbackY = Math.Max(fallbackY, y + h + 12);
             }
             using var snapshot = surface.Snapshot(); using var png = snapshot.Encode(SKEncodedImageFormat.Png, 100);
-            return new(PreviewKind.Image, ImageBytes: png.ToArray(), Notice: "快速预览 · 部分版式可能不同", PageCount: slides.Length, PageIndex: index);
+            return new(PreviewKind.Image, ImageBytes: png.ToArray(), Notice: "兼容预览 · 图表、组合对象和母版可能缺失，可打开原文件查看", PageCount: slides.Length, PageIndex: index);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or XmlException or InvalidOperationException or ArgumentException)
         { return new(PreviewKind.Information, Notice: "演示文稿受密码保护、已损坏或暂不可读取。"); }

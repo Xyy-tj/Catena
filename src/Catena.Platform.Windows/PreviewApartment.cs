@@ -19,7 +19,7 @@ public static class PreviewApartment
             Ready.TrySetResult(GetCurrentThreadId());
             while (GetMessage(out var message, 0, 0, 0) > 0)
             {
-                if (message.Id == 0x8002) { while (Jobs.TryDequeue(out var job)) job(); }
+                if (message.Id == 0x8002) { if (Jobs.TryDequeue(out var job)) job(); }
                 else { TranslateMessage(ref message); DispatchMessage(ref message); }
             }
         }) { IsBackground = true, Name = "Catena document preview" };

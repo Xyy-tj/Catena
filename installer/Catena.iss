@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.6.0"
+  #define AppVersion "0.6.2"
 #endif
 
 [Setup]
@@ -107,4 +107,3 @@ end;
 
 // Everything is shared with other applications and has its own Windows uninstaller.
 // Catena never uninstalls or stops that shared component.
-

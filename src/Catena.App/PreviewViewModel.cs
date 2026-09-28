@@ -9,6 +9,7 @@ public sealed partial class PreviewViewModel(IFilePreviewProvider provider, IPla
 {
     private CancellationTokenSource? pending;
     private long revision;
+    private bool useFallback;
     [ObservableProperty] private FileEntry? entry;
     [ObservableProperty] private string text = "";
     [ObservableProperty] private string notice = "选择一个文件查看预览";
@@ -38,8 +39,12 @@ public sealed partial class PreviewViewModel(IFilePreviewProvider provider, IPla
     partial void OnImageChanged(Bitmap? value) { OnPropertyChanged(nameof(HasImage)); OnPropertyChanged(nameof(IsInformation)); }
     partial void OnEntryChanged(FileEntry? value) { OnPropertyChanged(nameof(HasEntry)); OnPropertyChanged(nameof(FullSize)); }
 
-    public async Task ShowAsync(FileEntry? selected, int page = 0)
+    public Task ShowAsync(FileEntry? selected, int page = 0) => ShowCoreAsync(selected, page, false);
+    private async Task ShowCoreAsync(FileEntry? selected, int page, bool force)
     {
+        if (!force && selected is not null && selected == Entry && page == PageIndex &&
+            (IsLoading || HasNative || HasImage || HasText)) return;
+        if (selected?.Location != Entry?.Location) useFallback = false;
         var previous = pending; pending = null; previous?.Cancel();
         var current = ++revision;
         var oldImage = Image; Image = null; oldImage?.Dispose();
@@ -51,7 +56,9 @@ public sealed partial class PreviewViewModel(IFilePreviewProvider provider, IPla
         {
             // Debounce rapid keyboard selection; decoding never blocks the UI thread.
             await Task.Delay(100, cancellation.Token);
-            var content = await (provider is IPagePreviewProvider paged ? paged.ReadPageAsync(selected, page, cancellation.Token) : provider.ReadAsync(selected, cancellation.Token)).WaitAsync(cancellation.Token);
+            var content = await (useFallback && provider is IFallbackPreviewProvider fallback
+                ? fallback.ReadFallbackPageAsync(selected, page, cancellation.Token)
+                : provider is IPagePreviewProvider paged ? paged.ReadPageAsync(selected, page, cancellation.Token) : provider.ReadAsync(selected, cancellation.Token)).WaitAsync(cancellation.Token);
             if (content.ImageBytes is { } bytes)
             {
                 var decoding = Task.Run(() => DecodeImage(bytes));
@@ -70,6 +77,13 @@ public sealed partial class PreviewViewModel(IFilePreviewProvider provider, IPla
         catch (Exception ex) when (ex is IOException or ArgumentException or InvalidOperationException or NotSupportedException)
         { if (revision == current) Notice = "无法显示此文件的预览，请使用默认应用打开。"; }
         finally { decoded?.Dispose(); if (revision == current) { pending = null; IsLoading = false; } }
+    }
+    public async Task ShowFallbackAsync(string message)
+    {
+        if (!HasNative) return;
+        if (provider is IFallbackPreviewProvider && Entry is { } selected)
+        { useFallback = true; await ShowCoreAsync(selected, PageIndex, true); }
+        else { NativePath = ""; Notice = message; }
     }
     private static Bitmap DecodeImage(byte[] bytes)
     {

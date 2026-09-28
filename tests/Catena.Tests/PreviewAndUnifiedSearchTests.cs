@@ -132,6 +132,44 @@ public sealed class PreviewAndUnifiedSearchTests
     }
     private static void WriteDocx(string path, string xml)
     { using var archive = ZipFile.Open(path, ZipArchiveMode.Create); using var writer = new StreamWriter(archive.CreateEntry("word/document.xml").Open()); writer.Write(xml); }
+    [AvaloniaFact] public async Task NativeFailureFallsBackAndKeepsPageNavigationUntilSelectionChanges()
+    {
+        var provider = new FallbackPreview(); using var model = new PreviewViewModel(provider, new Platform());
+        var entry = new FileEntry(new("local", "file:///C:/slides.pptx"), "slides.pptx", EntryKind.File, 1, null, EntryCapabilities.Open);
+        await model.ShowAsync(entry); Assert.True(model.HasNative);
+        await model.ShowFallbackAsync("failed"); Assert.False(model.HasNative); Assert.Equal("page 0", model.Text);
+        await model.NextPageCommand.ExecuteAsync(null); Assert.Equal("page 1", model.Text); Assert.Equal(1, provider.NativeCalls);
+        await model.ShowAsync(entry with { Location = new("local", "file:///C:/next.pptx") });
+        Assert.True(model.HasNative); Assert.Equal(2, provider.NativeCalls);
+    }
+    [Fact] public async Task WindowsProviderPreservesFallbackPageIndex()
+    {
+        var fallback = new FallbackPreview();
+        var provider = new WindowsDocumentPreviewProvider(fallback);
+        var entry = new FileEntry(new("local", "file:///C:/slides.pptx"), "slides.pptx", EntryKind.File, 1, null, EntryCapabilities.Open);
+        var page = await provider.ReadFallbackPageAsync(entry, 1, TestContext.Current.CancellationToken);
+        Assert.Equal(1, page.PageIndex);
+    }
+    [AvaloniaFact] public async Task RepeatedSelectionDoesNotReloadButModifiedMetadataDoes()
+    {
+        var provider = new FallbackPreview(); using var model = new PreviewViewModel(provider, new Platform());
+        var entry = new FileEntry(new("local", "file:///C:/slides.pptx"), "slides.pptx", EntryKind.File, 1, DateTimeOffset.UtcNow, EntryCapabilities.Open);
+        var first = model.ShowAsync(entry);
+        await model.ShowAsync(entry with { }); await first;
+        for (var i = 0; i < 10; i++) await model.ShowAsync(entry with { });
+        Assert.Equal(1, provider.NativeCalls);
+        await model.ShowAsync(entry with { Size = 2 }); Assert.Equal(2, provider.NativeCalls);
+        await model.ShowAsync(null); await model.ShowAsync(entry); Assert.Equal(3, provider.NativeCalls);
+    }
+    private sealed class FallbackPreview : IFallbackPreviewProvider
+    {
+        public int NativeCalls { get; private set; }
+        public Task<FilePreview> ReadAsync(FileEntry entry, CancellationToken token = default) => ReadPageAsync(entry, 0, token);
+        public Task<FilePreview> ReadPageAsync(FileEntry entry, int page, CancellationToken token = default)
+        { NativeCalls++; return Task.FromResult(new FilePreview(PreviewKind.Native, NativePath: entry.DisplayPath, PageIndex: page)); }
+        public Task<FilePreview> ReadFallbackPageAsync(FileEntry entry, int page, CancellationToken token = default)
+            => Task.FromResult(new FilePreview(PreviewKind.Text, "page " + page, PageCount: 2, PageIndex: page));
+    }
     private static async Task WaitUntil(Func<bool> ready)
     { using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10)); while (!ready()) await Task.Delay(10, timeout.Token); }
     private static void SaveScreenshot(Window window, string name)

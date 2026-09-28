@@ -8,7 +8,7 @@
         <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" /></DataTemplate></ComboBox.ItemTemplate>
         <ComboBox.ContextMenu><ContextMenu><MenuItem Header="管理工作区" Click="ToggleWorkspaceTools" /><MenuItem Header="常用位置与近期记录" Click="OpenLocations" /><MenuItem Header="单窗格" Command="{Binding SetLayoutCommand}" CommandParameter="1" /></ContextMenu></ComboBox.ContextMenu>
       </ComboBox>
-      <Border x:Name="GlobalSearchEntry" Grid.Column="2" MaxWidth="744" VerticalAlignment="Center" Height="36" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" IsEnabled="{Binding !IsBusy}">
+      <Grid Grid.Column="2" HorizontalAlignment="Stretch"><Border x:Name="GlobalSearchEntry" MaxWidth="400" HorizontalAlignment="Right" Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Grid}}" VerticalAlignment="Center" Height="36" Background="{DynamicResource CatenaSurface}" BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" IsEnabled="{Binding !IsBusy}">
         <Grid ColumnDefinitions="Auto,*,Auto">
           <TextBox Grid.Column="1" x:Name="GlobalSearchBox" BorderThickness="0" Background="Transparent" PlaceholderText="搜索工作区文件…" KeyDown="GlobalSearchKeyDown" ToolTip.Tip="当前工作区及子文件夹 · Ctrl+K" />
           <Button Grid.Column="2" x:Name="SearchOptionsButton" Classes="icon" ToolTip.Tip="搜索范围与方式"><local:UiIcon Kind="filter" />
@@ -21,7 +21,7 @@
           </Button>
           <Button Classes="icon" Click="SubmitGlobalSearch" ToolTip.Tip="查找 · Enter"><local:UiIcon Kind="search" /></Button>
         </Grid>
-      </Border>
+      </Border></Grid>
       <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
         <Border BorderBrush="{DynamicResource CatenaBorder}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource CatenaSurface}" ClipToBounds="True">
           <StackPanel Orientation="Horizontal" Spacing="0" IsEnabled="{Binding !IsBusy}">
@@ -58,6 +58,3 @@
   </Grid>
   </Panel>
 </Window>
-
-
-

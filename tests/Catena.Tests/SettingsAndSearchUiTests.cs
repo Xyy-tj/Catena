@@ -41,6 +41,10 @@ public sealed class SettingsAndSearchUiTests
         var pane = model.Panes[0]; pane.ZoomList(2); Assert.Equal(1.2, pane.ListZoom); Assert.Equal(1, model.Panes[1].ListZoom);
         await model.SaveSafelyAsync(); Assert.Equal(1.2, (await repo.LoadAsync())!.Panes[0].ListZoom);
         window.UpdateLayout(); Assert.NotNull(window.FindControl<Image>("SkinBackground")!.Source);
+        var searchEntry = window.FindControl<Border>("GlobalSearchEntry")!;
+        Assert.Equal(400, searchEntry.Bounds.Width);
+        Assert.True(searchEntry.Bounds.X > 0);
+        Assert.Equal(((Control)searchEntry.Parent!).Bounds.Width, searchEntry.Bounds.Right, 1);
         var tabs = new SettingsWindow { DataContext = settings }; tabs.Show(window); tabs.UpdateLayout();
         Assert.Equal(6, tabs.FindControl<TabControl>("SettingsTabs")!.ItemCount);
         tabs.FindControl<TabControl>("SettingsTabs")!.SelectedIndex = 1; tabs.UpdateLayout();
@@ -49,6 +53,14 @@ public sealed class SettingsAndSearchUiTests
         {
             foreach (var pair in new[] { (window as Window, "catena-blue-mist.png"), (tabs as Window, "catena-settings-appearance.png") })
             { using var bitmap = new RenderTargetBitmap(new PixelSize((int)pair.Item1.Bounds.Width, (int)pair.Item1.Bounds.Height)); bitmap.Render(pair.Item1); bitmap.Save(Path.Combine(artifacts, pair.Item2), PngBitmapEncoderOptions.Default); }
+        }
+        tabs.FindControl<TabControl>("SettingsTabs")!.SelectedIndex = 4; tabs.UpdateLayout();
+        Assert.True(tabs.FindControl<Button>("GitHubLink")!.IsVisible);
+        Assert.Equal("https://github.com/Xyy-tj/Catena", SettingsWindow.RepositoryUri.AbsoluteUri);
+        if (artifacts is not null)
+        {
+            using var bitmap = new RenderTargetBitmap(new PixelSize((int)tabs.Bounds.Width, (int)tabs.Bounds.Height));
+            bitmap.Render(tabs); bitmap.Save(Path.Combine(artifacts, "catena-about.png"), PngBitmapEncoderOptions.Default);
         }
         tabs.Close(); foreach (var owned in window.OwnedWindows.ToArray()) owned.Close();
         window.Close(); while (window.IsVisible) await Task.Delay(10, timeout.Token);

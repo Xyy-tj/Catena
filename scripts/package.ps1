@@ -1,4 +1,4 @@
-param([string]$Version = '0.6.0', [string]$Compiler = '')
+param([string]$Version = '0.6.2', [string]$Compiler = '')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must be major.minor.patch.' }
@@ -16,5 +16,3 @@ foreach ($required in @('Catena.App.exe','tools/everything/es.exe','tools/everyt
 & $Compiler "/DAppVersion=$Version" (Join-Path $repo 'installer/Catena.iss')
 if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed ($LASTEXITCODE)." }
 Write-Output (Join-Path $repo "artifacts/installer/Catena-$Version-win-x64-Setup.exe")
-
-

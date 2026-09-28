@@ -166,6 +166,8 @@ public sealed class ChatTests
         model.Activate(model.Panes[1]); model.Panes[1].SelectedEntry = model.Panes[1].Entries.Single(e => e.Name == "README.md");
         await Wait(() => model.Preview.HasText); await Task.Delay(180, TestContext.Current.CancellationToken);
         window.UpdateLayout(); Screenshot(window, "catena-prototype-layout.png");
+        foreach (var filePane in window.GetVisualDescendants().OfType<PaneView>())
+            Assert.InRange(filePane.FindControl<ListBox>("FileList")!.Bounds.Width, filePane.Bounds.Width - 35, filePane.Bounds.Width);
         var buttons = new[] { "FourPaneButton", "RowsPaneButton", "ColumnsPaneButton" }.Select(n => window.FindControl<Button>(n)!).ToArray();
         Assert.All(buttons, b => Assert.InRange(b.Bounds.Width, 33, 35));
         void Click(Control control) { var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value; window.MouseDown(point, MouseButton.Left); window.MouseUp(point, MouseButton.Left); window.UpdateLayout(); }
@@ -182,7 +184,14 @@ public sealed class ChatTests
         var mouse = list.TranslatePoint(new Point(30, 50), window)!.Value;
         window.MouseWheel(mouse, new Vector(0, 1), RawInputModifiers.Control); window.UpdateLayout();
         Assert.Equal(1.1, model.Panes[0].ListZoom); Assert.Equal(1, model.Panes[1].ListZoom);
+        Assert.InRange(list.Bounds.Width * model.Panes[0].ListZoom, pane.Bounds.Width - 35, pane.Bounds.Width);
         Assert.InRange(list.GetVisualDescendants().OfType<ListBoxItem>().Count(), 1, 100);
+        model.Panes[0].TreeVisible = true; window.UpdateLayout();
+        Assert.InRange(list.Bounds.Width * model.Panes[0].ListZoom,
+            pane.Bounds.Width - model.Panes[0].TreeWidth - 45, pane.Bounds.Width - model.Panes[0].TreeWidth);
+        var leftEdge = list.TranslatePoint(default, pane)!.Value.X;
+        Assert.InRange(leftEdge, model.Panes[0].TreeWidth, model.Panes[0].TreeWidth + 30);
+        Screenshot(window, "catena-tree-alignment.png");
         window.Close(); await Wait(() => !window.IsVisible);
     }
     private static async Task Wait(Func<bool> condition)

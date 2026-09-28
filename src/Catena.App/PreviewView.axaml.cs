@@ -7,7 +7,8 @@ public sealed partial class PreviewView : UserControl
     public PreviewView()
     {
         InitializeComponent();
-        DocumentHost.Failed += message => { if (DataContext is PreviewViewModel model) { model.NativePath = ""; model.Notice = message; } };
+        DocumentHost.Failed += async message => { if (DataContext is PreviewViewModel model) await model.ShowFallbackAsync(message); };
+        DocumentHost.Ready += path => { if (DataContext is PreviewViewModel model && model.NativePath == path) model.Notice = ""; };
     }
     private async void CopyPath(object? sender, RoutedEventArgs e)
     {

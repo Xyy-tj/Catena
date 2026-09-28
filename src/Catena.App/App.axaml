@@ -53,6 +53,8 @@
     <Style Selector="Button.previewAction"><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="2,6" /></Style>
     <Style Selector="Button.primary"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /><Setter Property="Foreground" Value="White" /></Style>
     <Style Selector="ToolTip"><Setter Property="MaxWidth" Value="600" /></Style>
+    <Style Selector="ContextMenu.file-menu"><Setter Property="Background" Value="{DynamicResource CatenaSurface}" /><Setter Property="Foreground" Value="{DynamicResource CatenaText}" /><Setter Property="BorderBrush" Value="{DynamicResource CatenaBorder}" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="6" /><Setter Property="Padding" Value="4" /></Style>
+    <Style Selector="ContextMenu.file-menu MenuItem"><Setter Property="FontSize" Value="13" /><Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="8,4" /></Style>
     <Style Selector="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
     <Style Selector="GridSplitter"><Setter Property="Background" Value="Transparent" /></Style>
     <Style Selector="GridSplitter:pointerover"><Setter Property="Background" Value="{DynamicResource CatenaAccent}" /></Style>
