@@ -7,8 +7,9 @@ using CommunityToolkit.Mvvm.Input;
 namespace Catena.App;
 
 public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretProtector protector,
-    IAiSearchPlanner planner, IIndexedSearchProvider everything, IEverythingRuntime? runtime = null) : ObservableObject, IDisposable
+    IAiSearchPlanner planner, IIndexedSearchProvider everything, IEverythingRuntime? runtime = null, UpdateViewModel? updates = null) : ObservableObject, IDisposable
 {
+    public UpdateViewModel? Updates { get; } = updates;
     private CancellationTokenSource? pending;
     private bool loadFailed;
     public AppSettings Current { get; private set; } = new();
@@ -16,6 +17,7 @@ public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretPr
     [ObservableProperty] private string everythingExecutable = "";
     [ObservableProperty] private string everythingInstance = "";
     [ObservableProperty] private bool liveSearch = true;
+    [ObservableProperty] private bool autoCheckUpdates = true;
     [ObservableProperty] private int defaultSearchScope = 2;
     [ObservableProperty] private int searchResultLimit = 200;
     [ObservableProperty] private int theme;
@@ -42,11 +44,13 @@ public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretPr
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException)
         { loadFailed = true; Status = "设置文件损坏或版本不兼容，已保留原文件。请备份并修复 settings.json 后重启。"; }
         ResetDraft(); OnPropertyChanged(nameof(CanEdit));
+        Updates?.SetAutomatic(!loadFailed && Current.AutoCheckUpdates);
     }
     public void ResetDraft()
     {
         EverythingExecutable = Current.EverythingExecutable; EverythingInstance = Current.EverythingInstance;
         LiveSearch = Current.LiveSearch; AiBaseUrl = Current.AiBaseUrl; AiModel = Current.AiModel;
+        AutoCheckUpdates = Current.AutoCheckUpdates;
         DefaultSearchScope = Current.DefaultSearchScope; SearchResultLimit = Current.SearchResultLimit;
         Theme = Current.Theme; Skin = Current.Skin; BackgroundOpacity = Current.BackgroundOpacity;
         TimeoutSeconds = Current.AiTimeoutSeconds; ApiKey = ""; ClearApiKey = false; OnPropertyChanged(nameof(KeyPlaceholder));
@@ -64,6 +68,7 @@ public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretPr
         return Current with
         {
             EverythingExecutable = EverythingExecutable.Trim().Trim('"'), EverythingInstance = EverythingInstance.Trim(), LiveSearch = LiveSearch,
+            AutoCheckUpdates = AutoCheckUpdates,
             DefaultSearchScope = DefaultSearchScope, SearchResultLimit = SearchResultLimit,
             Theme = Theme, Skin = Skin, BackgroundOpacity = BackgroundOpacity,
             AiBaseUrl = AiBaseUrl.Trim().TrimEnd('/'), AiModel = AiModel.Trim(), AiTimeoutSeconds = TimeoutSeconds,
@@ -83,6 +88,7 @@ public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretPr
         try
         {
             var draft = Draft(); await store.SaveAsync(draft); Current = draft; ResetDraft();
+            Updates?.SetAutomatic(Current.AutoCheckUpdates);
             Status = "已保存"; Saved?.Invoke();
         }
         catch (SearchAssistanceException ex) { Status = ex.Message; }
@@ -133,5 +139,5 @@ public sealed partial class SettingsViewModel(IAppSettingsStore store, ISecretPr
         catch (SearchAssistanceException ex) { Status = ex.Message; }
         finally { IsInstalling = false; }
     }
-    public void Dispose() => pending?.Cancel();
+    public void Dispose() { pending?.Cancel(); Updates?.Dispose(); }
 }

@@ -49,6 +49,7 @@ public sealed record AppSettings
     public string EverythingExecutable { get; init; } = "";
     public string EverythingInstance { get; init; } = "";
     public bool LiveSearch { get; init; } = true;
+    public bool AutoCheckUpdates { get; init; } = true;
     public int DefaultSearchScope { get; init; } = 2;
     public int SearchResultLimit { get; init; } = 200;
     public int Theme { get; init; }

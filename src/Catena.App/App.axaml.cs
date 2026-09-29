@@ -35,6 +35,8 @@ public sealed partial class App : Application
                 .AddSingleton<IAiSearchPlanner, OpenAiSearchPlanner>()
                 .AddSingleton<IAiChatClient, OpenAiChatClient>()
                 .AddSingleton<ISecretProtector, WindowsSecretProtector>()
+                .AddSingleton<IUpdateChecker>(_ => new GitHubUpdateChecker())
+                .AddSingleton<UpdateViewModel>()
                 .AddSingleton<IAppSettingsStore>(new JsonAppSettingsStore(Path.Combine(directory, "settings.json")))
                 .AddSingleton<SettingsViewModel>()
                 .AddSingleton<IPlatformActions, WindowsPlatformActions>()

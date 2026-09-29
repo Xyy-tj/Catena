@@ -174,3 +174,13 @@ PPT/PPTX 优先使用已安装的 Windows 文档预览处理程序，避免简�
 2026-09-29 对用户指定、已在本地的约 60 MB PPTX 做只读测量。首次接口调用约 1084 ms，立即再次查看的缓存命中为 0.4 ms。接口返回后 Office 仍可能继续绘制，这些数字不等于完整首屏时间，也不代表首次打开的 3–5 秒等待已经消除。样本没有内嵌封面。报告保存在 artifacts/screenshots/ppt-large-timing.txt，测试可通过 CATENA_PREVIEW_PERF_FILE 指定只读样本。
 
 回归 82 项通过、1 项跳过；跳过项为未启用的 Everything 外部实例测试。
+
+## 0.6.3 更新检查与项目首页
+
+默认中文 README 与英文 README 共享四组演示截图，展示工作区、查找和 AI 对话。截图源在 `scripts/screenshots/`，通过真实 Avalonia 控件渲染，无个人文件数据。
+
+设置的「关于」页新增当前版本、自动检查开关、手动检查、上次成功检查时间与发布页面入口。新版本标识仅出现在「关于」标签旁。后台任务在启动 10 秒后检查，持续运行期间每 24 小时再检查一次，关闭开关并保存后停止定时检查。
+
+更新源使用 [GitHub 最新正式发布 API](https://docs.github.com/en/rest/releases/releases#get-the-latest-release)。请求有 12 秒超时和 1 MiB 响应上限，不携带 AI 凭据或文件数据。仅比较正式版本，下载入口固定在本仓库 Releases。404、网络失败、限流、响应无效与已有最新版本分别处理；不自动下载或覆盖安装。发布新版本时需同步应用版本、安装包版本与 GitHub release tag。
+
+0.6.3 验证：92 项通过、4 项按需外部集成测试跳过。更新检查覆盖正式版本解析、固定发布链接、失败状态、开关持久化、取消和延迟自动调度。正式 EXE 的独立数据目录启动检查退出码为 0，输出 `CATENA_SMOKE_READY panes=2 persistence=True`。中英文 README 的相对链接、锚点、图片加载和浏览器排版已检查。

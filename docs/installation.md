@@ -1,6 +1,6 @@
 # 安装与依赖分发
 
-默认交付物为 Windows x64 离线安装包 `artifacts/installer/Catena-0.6.2-win-x64-Setup.exe`，由 Inno Setup 6.7.3 编译。当前约 43.6 MB，不包含调试符号。应用和 .NET 运行时随包安装。
+默认交付物为 Windows x64 离线安装包 `artifacts/installer/Catena-0.6.3-win-x64-Setup.exe`，由 Inno Setup 6.7.3 编译。当前约 43.6 MB，不包含调试符号。应用和 .NET 运行时随包安装。
 
 ## 用户流程
 
@@ -23,7 +23,7 @@ Catena 使用稳定 AppId 安装到 Program Files 下。升级保留 `%LOCALAPPD
 
 ```powershell
 ./scripts/dev.ps1 restore
-./scripts/package.ps1 -Version 0.6.2
+./scripts/package.ps1 -Version 0.6.3
 # 自定义编译器位置
 ./scripts/package.ps1 -Compiler 'C:/Program Files (x86)/Inno Setup 6/ISCC.exe'
 ```
@@ -50,3 +50,9 @@ Catena 使用稳定 AppId 安装到 Program Files 下。升级保留 `%LOCALAPPD
 
 2026-09-29 的 0.6.1 回归为 80 项通过、1 项跳过。包含真实 PowerPoint/Word 预览处理程序加载与容器缩放、预览回退及翻页、OneDrive 在线文档保护，以及目录树开启后的缩放列表对齐。Everything 外部索引集成测试本轮未启用。
 最终 EXE 在独立数据目录启动并正常退出，返回码 0，输出 CATENA_SMOKE_READY panes=2 persistence=True。
+
+## 0.6.3 版本检查
+
+在设置的「关于」页手动检查版本，或开启自动检查并保存。默认在启动后延迟检查，持续运行期间每 24 小时再检查一次。发现正式新版时，仅「关于」标签旁出现标识；点击发布页面后由用户下载安装。关闭自动检查不影响手动检查。
+
+更新查询访问本仓库的 GitHub 公共发布接口，不传送文件和 AI 密钥。离线或访问受限时显示失败状态，文件浏览仍可使用。新版本必须在 GitHub Releases 正式发布后，已安装的旧版才能检测到。

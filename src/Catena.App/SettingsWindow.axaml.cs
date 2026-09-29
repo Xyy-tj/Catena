@@ -11,6 +11,12 @@ public sealed partial class SettingsWindow : Window
         Closed += (_, _) => { if (DataContext is SettingsViewModel model) { model.CancelTestCommand.Execute(null); model.ResetDraft(); } };
     }
     private void CloseSettings(object? sender, RoutedEventArgs e) => Close();
+    private async void OpenRelease(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not SettingsViewModel { Updates: { } updates }) return;
+        try { if (!await Launcher.LaunchUriAsync(updates.ReleasePage)) updates.Status = "无法打开浏览器，请访问 GitHub Releases"; }
+        catch (Exception) { updates.Status = "无法打开浏览器，请访问 GitHub Releases"; }
+    }
     private async void OpenGitHub(object? sender, RoutedEventArgs e)
     {
         try

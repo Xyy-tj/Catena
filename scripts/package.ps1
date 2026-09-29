@@ -1,4 +1,4 @@
-param([string]$Version = '0.6.2', [string]$Compiler = '')
+param([string]$Version = '0.6.3', [string]$Compiler = '')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must be major.minor.patch.' }

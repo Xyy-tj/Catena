@@ -34,7 +34,19 @@
         <CheckBox Content="清除已保存的 API Key" IsChecked="{Binding ClearApiKey, Mode=TwoWay}" />
         <StackPanel Orientation="Horizontal" Spacing="10"><TextBlock Text="超时（秒）" VerticalAlignment="Center" /><NumericUpDown Value="{Binding TimeoutSeconds, Mode=TwoWay}" Minimum="5" Maximum="120" Width="110" /><Button Content="测试连接" Command="{Binding TestAiCommand}" /></StackPanel>
       </StackPanel></ScrollViewer></TabItem>
-      <TabItem Header="关于"><StackPanel Margin="24,8,0,0" Spacing="14"><Image Source="avares://Catena.App/Assets/catena-64.png" Width="48" Height="48" HorizontalAlignment="Left" /><TextBlock Text="Catena" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="多窗格文件管理与 AI 辅助查找" /><TextBlock Text="本地运行 · Everything 索引 · OpenAI 兼容接口" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" /><Button x:Name="GitHubLink" Click="OpenGitHub" HorizontalAlignment="Left" ToolTip.Tip="https://github.com/Xyy-tj/Catena"><StackPanel Orientation="Horizontal" Spacing="10"><local:UiIcon Kind="github" Width="20" Height="20" VerticalAlignment="Center" /><TextBlock Text="Xyy-tj / Catena" VerticalAlignment="Center" /><local:UiIcon Kind="open" Width="14" Height="14" VerticalAlignment="Center" /></StackPanel></Button></StackPanel></TabItem>
+      <TabItem>
+        <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="关于" VerticalAlignment="Center" /><Border Background="{DynamicResource CatenaSelection}" CornerRadius="4" Padding="4,2" IsVisible="{Binding Updates.IsUpdateAvailable}"><TextBlock Text="新版本" FontSize="10" Foreground="{DynamicResource CatenaAccent}" /></Border></StackPanel></TabItem.Header>
+        <ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="12"><Image Source="avares://Catena.App/Assets/catena-64.png" Width="48" Height="48" /><StackPanel Spacing="4"><TextBlock Text="Catena" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="{Binding Updates.CurrentVersionText}" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel></StackPanel>
+          <TextBlock Text="多窗格文件管理与 AI 辅助查找" />
+          <Button x:Name="GitHubLink" Click="OpenGitHub" HorizontalAlignment="Left" ToolTip.Tip="https://github.com/Xyy-tj/Catena"><StackPanel Orientation="Horizontal" Spacing="10"><local:UiIcon Kind="github" Width="20" Height="20" VerticalAlignment="Center" /><TextBlock Text="Xyy-tj / Catena" VerticalAlignment="Center" /><local:UiIcon Kind="open" Width="14" Height="14" VerticalAlignment="Center" /></StackPanel></Button>
+          <Separator Margin="0,4" />
+          <CheckBox Content="自动检查更新" IsChecked="{Binding AutoCheckUpdates, Mode=TwoWay}" IsEnabled="{Binding CanEdit}" ToolTip.Tip="保存后生效；启动后后台检查，运行期间每 24 小时检查一次。仅连接 GitHub 获取版本信息。" />
+          <TextBlock Text="{Binding Updates.Status}" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding Updates.LastCheckedText}" FontSize="12" Foreground="{DynamicResource CatenaSecondary}" />
+          <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="检查更新" Command="{Binding Updates.CheckCommand}" IsEnabled="{Binding !Updates.IsChecking}" /><Button Content="查看发布页面" Click="OpenRelease" /></StackPanel>
+        </StackPanel></ScrollViewer>
+      </TabItem>
       <TabItem Header="帮助"><ScrollViewer><StackPanel Margin="24,8,0,0" Spacing="14"><TextBlock Text="快捷键" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="Ctrl + K    搜索&#10;Ctrl + L    编辑当前路径&#10;Ctrl + 滚轮    缩放文件列表&#10;F6    切换窗格&#10;F5    刷新&#10;Alt + P    显示 / 隐藏预览&#10;Alt + ← / →    后退 / 前进&#10;Alt + ↑    上级目录" LineHeight="28" /><Separator /><TextBlock Text="索引未就绪时，可在结果窗口选择扫描当前目录。在线文件仅展示元数据，预览不会自动下载正文。" TextWrapping="Wrap" Foreground="{DynamicResource CatenaSecondary}" /></StackPanel></ScrollViewer></TabItem>
     </TabControl>
     <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
